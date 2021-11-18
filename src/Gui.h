@@ -6,7 +6,6 @@
 #include <QString>
 #include <QNetworkAccessManager>
 #include <QProcess>
-#include <QWinTaskbarButton>
 #include "Settings.h"
 #include "Console.h"
 #include "Logic.h"
@@ -18,6 +17,10 @@
 #include "ReadRamThread.h"
 #include "WriteRamThread.h"
 
+#ifdef Q_OS_WIN
+#include <QWinTaskbarButton>
+#endif
+
 class Gui:public QWidget
 {
   Q_OBJECT Settings * settings;
@@ -28,7 +31,6 @@ class Gui:public QWidget
   QVBoxLayout *center;
   QHBoxLayout *down;
   QProgressBar *progress;
-  QWinTaskbarButton *winTaskbar;
   QLabel *image;
   QPixmap *logo;
   QPushButton *cancel_btn;
@@ -57,6 +59,11 @@ class Gui:public QWidget
   QNetworkAccessManager *manager3;
   QProcess updateProcess;
   QProcess patchProcess;
+
+#ifdef Q_OS_WIN
+  QWinTaskbarButton *winTaskbar;
+#endif
+
 
 public:
     Gui (QWidget * parent = nullptr);

@@ -18,11 +18,16 @@
 #include "QDebug"
 #include "QDateTime"
 #include "QDesktopServices"
-#include "windows.h"
-#include <QWinTaskbarProgress>
+
 
 #ifdef Q_OS_WIN
 #include "USBPortWin.h"
+#include "windows.h"
+#include <QWinTaskbarProgress>
+#endif
+
+#ifdef Q_OS_UNIX
+#include "USBPort.h"
 #endif
 
 #include "const.h"
@@ -66,8 +71,10 @@ Gui::Gui (QWidget * parent):QWidget (parent)
   console = new Console (this);
   right->addWidget (console);
   progress = new QProgressBar (this);
+  #ifdef Q_OS_WIN
   winTaskbar = new QWinTaskbarButton(this);
   QWinTaskbarProgress *winProgress = winTaskbar->progress();
+  #endif
   down->addWidget (progress);
   cancel_btn = new QPushButton (tr ("Cancel"), this);
   cancel_btn->setEnabled (false);
@@ -82,9 +89,11 @@ Gui::Gui (QWidget * parent):QWidget (parent)
   eflash_btn = new QPushButton (tr ("Erase FLASH"), this);
   eram_btn = new QPushButton (tr ("Erase RAM"), this);
   about_btn = new QPushButton (tr ("About"), this);
+  #ifdef Q_OS_WIN
   patch_btn = new QPushButton (tr ("ROM Patcher"),this );
   firmware_btn = new QPushButton (tr ("Update Flasher Firmware"), this);
   keepfiles_check = new QCheckBox (tr ("Keep Downloaded Files"), this);
+  #endif
 
   center->addWidget (status_btn, Qt::AlignTop);
   center->addWidget (rflash_btn);
@@ -96,23 +105,26 @@ Gui::Gui (QWidget * parent):QWidget (parent)
   center->addSpacing (20);
   center->addWidget (about_btn);
   center->addStretch (1);
+  grid->addLayout (center, 0, 1);
+  #ifdef Q_OS_WIN
   patch_btn->setFixedWidth(75);
   left->addWidget (patch_btn);
   firmware_btn->setFixedWidth(140);
   left->addWidget (firmware_btn);
   left->addWidget (keepfiles_check);
-  grid->addLayout (center, 0, 1);
+
   keepfiles_check->setCheckState (Qt::Checked);
   winProgress->setVisible(true);
-
+  #endif
   thread_WFLA = new WriteFlashThread;
   thread_RFLA = new ReadFlashThread;
   thread_E = new EraseThread;
   thread_RRAM = new ReadRamThread;
   thread_WRAM = new WriteRamThread;
   int func_wr = rand() % 100 + 1;
+  #ifdef Q_OS_WIN
   if (func_wr == 23){winTaskbar->setWindow(this->windowHandle());winTaskbar->progress()->setVisible(true);winTaskbar->setOverlayIcon(QIcon(":/qss_icons/rc/genericarrow.png"));}
-
+  #endif
 
   connect (cancel_btn, SIGNAL (clicked ()), thread_RFLA, SLOT (canceled ()));
   connect (cancel_btn, SIGNAL (clicked ()), thread_WFLA, SLOT (canceled ()));
@@ -128,9 +140,10 @@ Gui::Gui (QWidget * parent):QWidget (parent)
   connect (wram_btn, SIGNAL (clicked ()), this, SLOT (write_ram ()));
   connect (eram_btn, SIGNAL (clicked ()), this, SLOT (erase_ram ()));
   connect (about_btn, SIGNAL (clicked ()), this, SLOT (about ()));
+  #ifdef Q_OS_WIN
   connect (firmware_btn, SIGNAL (clicked ()), this, SLOT (firmware ()));
   connect (patch_btn, SIGNAL (clicked ()), this, SLOT (patcher ()));
-
+  #endif
   connect (thread_WFLA, SIGNAL (set_progress (int, int)), this,
        SLOT (setProgress (int, int)));
   connect (thread_RFLA, SIGNAL (set_progress (int, int)), this,
@@ -161,7 +174,12 @@ Gui::Gui (QWidget * parent):QWidget (parent)
 AbstractPort *
 Gui::create_port (void)
 {
+    #ifdef Q_OS_WIN
     return new USBPortWin;
+    #endif
+    #ifdef Q_OS_UNIX
+    return new USBPort;
+    #endif
 }
 
 void
@@ -524,11 +542,13 @@ Gui::setProgress (int ile, int max)
   progress->setMinimum (0);
   progress->setMaximum (max);
   progress->setValue (ile);
+  #ifdef Q_OS_WIN
   winTaskbar->setWindow(this->windowHandle());
   winTaskbar->progress()->setVisible(true);
   winTaskbar->progress()->setMinimum (0);
   winTaskbar->progress()->setMaximum (max);
   winTaskbar->progress()->setValue (ile);
+  #endif
 }
 
 

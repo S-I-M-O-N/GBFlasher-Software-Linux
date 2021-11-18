@@ -18,11 +18,16 @@ enum cchars
 /* strings for version information */
 #ifdef Q_OS_WIN
 #define SYSTEM "WINDOWS"
-#define DEVELOPED "GCC 8.2.0 + QT 5.13.1"
+#define DEVELOPED "GCC 10.2.1 + QT 5.15.2"
+#endif
+
+#ifdef Q_OS_UNIX
+#define SYSTEM "LINUX"
+#define DEVELOPED "GCC 10.2.1 + QT 5.15.2"
 #endif
 
 /* return values and errors */
-enum error_t
+enum error_t2
 { TIMEOUT = -1, FILEERROR_O = -2, FILEERROR_W = -3, FILEERROR_R =
     -4, SEND_ERROR = -5,
   BAD_PACKET = -6, BAD_PARAMS = -7, PORT_ERROR = -8, WRONG_SIZE = -9

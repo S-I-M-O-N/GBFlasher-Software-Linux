@@ -12,7 +12,7 @@ class About:public QDialog
   QLabel *image;
   QVBoxLayout *all;
   QGroupBox *box;
-  QLabel *name, *copy, *desc1, *desc2, *warning, *translator;
+  QLabel *name, *copy, *desc1, *desc2, *desc3, *warning, *translator;
   QVBoxLayout *labels;
 public:
     About (QWidget * parent = nullptr);

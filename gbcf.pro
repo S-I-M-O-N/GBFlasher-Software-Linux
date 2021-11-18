@@ -3,9 +3,9 @@ TARGET = gbcflsh
 DEPENDPATH += .
 INCLUDEPATH += .
 
-QT += network widgets serialport winextras
+QT += network widgets serialport
 
-QMAKE_LFLAGS += -static
+#QMAKE_LFLAGS += -static
 
 RESOURCES += qdarkstyle/style.qrc
 
@@ -13,7 +13,6 @@ RESOURCES += qdarkstyle/style.qrc
 HEADERS += src/About.h \
            src/AbstractPort.h \
            src/Console.h \
-           src/USBPortWin.h \
            src/const.h \
            src/EraseThread.h \
            src/Gui.h \
@@ -38,15 +37,20 @@ SOURCES += src/About.cpp \
            src/WriteRamThread.cpp
 RC_FILE = src/res.rc
 win32 {
+QT += winextras
 SOURCES += \
            src/USBPortWin.cpp
-HEADERS +=
+HEADERS += \
+           src/USBPortWin.h
 LIBS += -L"$$PWD/src/lib" -lftd2xx
 }
 unix {
-SOURCES +=
-HEADERS +=
-LIBS += -lftdi
+SOURCES += \
+           src/USBPort.cpp
+HEADERS += \
+           src/USBPort.h
+LIBS += -lftdi \
+        -lQt5Widgets
 exec.path = /usr/bin
 exec.files = gbcflsh
 INSTALLS += exec config

@@ -2,9 +2,8 @@ Linux build & install
 =====================
 
 Before installation you have to assure that you have installed g++ (almost in
-every Linux system it is installed 'from box') and QT4. In addition, if you want
-to use USB version of device, you need to install libftdi, available at:
-http://www.intra2net.com/de/produkte/opensource/ftdi/
+every Linux system it is installed 'from box') and QT5. In addition you need to install libftdi.
+
 
 Process of building and installing under Linux is based on QT qmake program.
 All the build configuration is saved in gbcf.pro file. This file is used by
